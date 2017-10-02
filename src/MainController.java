@@ -53,11 +53,13 @@ public class MainController {
 		System.out.println("Goodbye!");
 	}// end main
 
+	//main menu, asks user what they want to do and executes the appropriate method
 	private static void mainMenu(Statement stmt) throws SQLException, InterruptedException {
 		System.out.println("Welcome to the movie database!");
 		System.out.println("What would you like to do? \n1. Browse by movie genre \n2. Search by movie title");
 		System.out.println("3. Browse by movie rating \n4. List all movies \n5. Manage database (add or remove movie)");
 		System.out.println("6. Exit program");
+		//Takes user input while making sure it's a number
 		while (!keyboard.hasNextInt()) {
 			System.out.println("Invalid input, please use numbers");
 			keyboard.next();
@@ -86,11 +88,12 @@ public class MainController {
 			break;
 		default:
 			System.out.println("Invalid choice");
-			mainMenu(stmt);
+			mainMenu(stmt); //returns to the menu if no valid choice is entered
 			break;
 		}
 	}
 
+	//sub-menu where the user can choose between different management options
 	private static void manageMovies(Statement stmt) throws SQLException, InterruptedException {
 		System.out.println("Please choose action:");
 		System.out.println("1. Add movie \n2. remove movie \n3. Update movie \n4. Back to main menu");
@@ -115,6 +118,7 @@ public class MainController {
 			break;
 		default:
 			System.out.println("Invalid choice");
+			manageMovies(stmt); //resets the menu and asks the user again
 			break;
 		}
 	}
@@ -144,11 +148,12 @@ public class MainController {
 			System.out.println("Rating: " + rating);
 		}
 		System.out.println("Listing done. Returning to main menu...");
-		Thread.sleep(3000);
+		Thread.sleep(3000); //added delay, just to slow down the program (mostly to try it out)
 		rs.close();
 		mainMenu(stmt);
 	}
 
+	//lists movies by genre by users choice
 	private static void listByGenre(Statement stmt) throws SQLException, InterruptedException {
 		System.out.println(
 				"Choose genre to list: \n1. Action \n2. Comedy \n3. Horror \n4. Romantic \n5. Thriller \n6. Go back to main menu");
@@ -157,7 +162,7 @@ public class MainController {
 			keyboard.next();
 		}
 		int choice = keyboard.nextInt();
-		keyboard.nextLine();
+		keyboard.nextLine(); //clear scanner buffer, otherwise Strings registers wrong value
 		if (choice == 6) {
 			mainMenu(stmt);
 		} else if (choice < 1 || choice > 5) {
@@ -196,6 +201,7 @@ public class MainController {
 
 	}
 
+	//sorts movies by rating, highest to lowest
 	private static void sortByRating(Statement stmt) throws SQLException, InterruptedException {
 		String sql = "SELECT title, releaseYear, genres.type, concat(directors.firstName, ' ', directors.lastName),"
 				+ "concat(actors.firstName, ' ', actors.lastName),"
@@ -227,6 +233,7 @@ public class MainController {
 		mainMenu(stmt);
 	}
 
+	//Prompts user for input and makes a search for movie titles containing the input
 	private static void searchByTitle(Statement stmt) throws SQLException, InterruptedException {
 		System.out.println("Enter search phrase (Only movie title implemented)");
 		String search = keyboard.nextLine();
@@ -259,6 +266,7 @@ public class MainController {
 		mainMenu(stmt);
 	}
 
+	//adds movies by sending parameters to addMovie() stored in the database
 	private static void addMovie(Statement stmt) throws SQLException, InterruptedException {
 		Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
 		System.out.println("Enter movie title:");
@@ -269,7 +277,7 @@ public class MainController {
 
 		System.out.println("Enter release year:");
 		int released = keyboard.nextInt();
-		keyboard.nextLine();
+		keyboard.nextLine(); //clear scanner buffer
 
 		System.out.println("Enter directors first name:");
 		String directorFname = keyboard.nextLine();
@@ -310,6 +318,7 @@ public class MainController {
 		mainMenu(stmt);
 	}
 
+	//deletes an entry from table movies, chosen by movie ID
 	private static void deleteMovie(Statement stmt) throws SQLException, InterruptedException {
 		System.out.println("Choose movie by ID to delete or type exit to go back to the main menu");
 
@@ -345,6 +354,7 @@ public class MainController {
 		mainMenu(stmt);
 	}
 
+	//allows user to edit the title of a movie
 	private static void editMovie(Statement stmt) throws SQLException, InterruptedException {
 		System.out.println("Choose movie by ID to edit or type exit to go back to the main menu");
 
@@ -381,4 +391,4 @@ public class MainController {
 		Thread.sleep(2000);
 		mainMenu(stmt);
 	}
-}// end FirstExample
+}
